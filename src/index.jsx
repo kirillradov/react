@@ -12,20 +12,21 @@ const MessageField = (props) => <div>
     <button onClick= { clearMessage }>очистить</button>
 </div>;
 
-ReactDOM.render (
-    <MessageField messages={ messages } />,
-    document.getElementById('root' ),
-);
+function renderChat() {
+    ReactDOM.render (
+        <MessageField messages={ messages } />,
+        document.getElementById('root' ),
+    );
+}
 
 function sendMessage() {
     let newMessage = document.getElementById('inputMessage').value;
     messages.push(newMessage);
-    ReactDOM.render (
-       <MessageField messages={ messages } />,
-       document.getElementById('root' ),
-        );
+    renderChat();
     }
 
 function clearMessage() {
     document.getElementById('inputMessage').value = '';
 }
+
+renderChat();
