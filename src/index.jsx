@@ -1,5 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import App from './components/MessageField.jsx';
+
+ReactDOM.render (
+    <App />,
+    document.getElementById('root' ),
+);
+
+
+/*import React from 'react';
+import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
+import App from './components/App.jsx';
 
 const messages = ['Привет', 'Привет в этом чатике!'];
 
@@ -29,4 +41,4 @@ function clearMessage() {
     document.getElementById('inputMessage').value = '';
 }
 
-renderChat();
+renderChat();*/
