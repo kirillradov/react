@@ -10,3 +10,4 @@ export default class Message extends React.Component {
         return <div>{ this.props.text }</div>
     }
 }
+//*
