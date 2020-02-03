@@ -1,19 +1,23 @@
 const path = require("path");
 const webpack = require('webpack');
+
 module.exports = {
     entry: {
         app: './index.jsx',
     },
-    context: path.resolve (__dirname, "src"),
+    context: path.resolve(__dirname, "src"),
     output: {
-        path: path.resolve (__dirname, "public", "build"),
+        path: path.resolve(__dirname, "public", "build"),
         filename: 'app.js',
     },
+
+    watch: process.argv[process.argv.length - 1] === 'development',
+
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                include: path.resolve (__dirname , "src"),
+                include: path.resolve(__dirname, "src"),
                 loader: 'babel-loader',
                 exclude: /node_modules/,
                 options: {
@@ -29,6 +33,24 @@ module.exports = {
 
                 }
             },
+            {
+                test: /\.css$/,
+                loader: 'style-loader!css-loader',
+            },
         ],
     },
+
+    resolve: {
+        modules: [`${__dirname}/src`, 'node_modules'],
+        extensions: ['.js', '.jsx'],
+    },
+
+    devServer: {
+        port: 8080,
+        historyApiFallback: {
+            index: 'index.html'
+        }
+    },
+
+    devtool: 'cheap-inline-module-source-map',
 };

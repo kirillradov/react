@@ -1,63 +1,92 @@
 import React from 'react';
-import Message from './Message.jsx';
+import { TextField, FloatingActionButton } from 'material-ui';
+import SendIcon from 'material-ui/svg-icons/content/send';
+import Message from './Message';
+import '../styles/styles.css';
 
 export default class MessageField extends React.Component {
     state = {
-        messages: ["Привет!", "Как дела?"],
-        newMessage: false,
-    };
+        messages: [{ text: "Привет!", sender: 'bot' }, { text: "Как дела?", sender: 'bot' }],
+        input: '',
+        NewMessage: false,
+       };
 
-    handleClick = () => {
-        let newMessage = document.getElementById('inputMessage').value;
-        let author = document.getElementById('inputName').value;
-        if (author) {
-            this.setState({ messages: [...this.state.messages, `${author}, ${newMessage}`] });
-            this.state.newMessage = true;
-        } else {
-            this.setState({ messages: [...this.state.messages, `${newMessage}`] });
-            this.state.newMessage = true;
-        }
+    textInput = React.createRef();
 
-    };
-
-    handleKeyPress = (event) => {
-        if (event.key == 'Enter') {
-            this.handleClick();
-        }
-    };
-
-    clearMessage = () => {
-        document.getElementById('inputMessage').value = '';
-    };
-
-    componentDidUpdate() {
-        let author = document.getElementById('inputName').value;
-        if (this.state.newMessage && document.getElementById('inputMessage').value !== '') {
-            if (author) {
-                setTimeout(() =>
-                    this.setState(
-                        { messages: [...this.state.messages, `${author}! Не приставай ко мне, я робот!` ] }), 1000);
-                this.state.newMessage = false;
-            } else {
-                setTimeout(() =>
-                    this.setState(
-                        { messages: [...this.state.messages, `Не приставай ко мне, я робот!` ] }), 1000);
-                this.state.newMessage = false;
+    componentDidMount() {
+        this.textInput.current.focus();
+        this.scrollToBottom();
             }
 
-        }
-    }
-    render() {
-        const messageElements = this.state.messages.map((text, index) => (
-            <Message key={ index } text={ text } />));
 
-        return <div>
-            { messageElements }
-            <input id='inputName' type="text" placeholder="Имя"/>
-            <input id='inputMessage' type="text" placeholder="ваше сообщение" onKeyPress={this.handleKeyPress}/>
-            <button onClick= { this.handleClick }>отправить</button>
-            <button onClick= { this.clearMessage }>очистить</button>
+    componentDidUpdate() {
+        if (this.state.messages[this.state.messages.length - 1].sender === 'me' && this.state.NewMessage) {
+            setTimeout(() =>
+                    this.setState({
+                        messages: [...this.state.messages, {text: 'Не приставай ко мне, я робот!', sender: 'bot'} ] }),
+                1000);
+            this.state.NewMessage = false;
+            this.textInput.current.focus();
+        }
+        this.scrollToBottom();
+            }
+
+    onFocusChange = () => {
+        this.setState({ isFocused: true });
+    };
+
+    handleSendMessage = () => {
+        const str = this.state.input.trim();
+        if (str) {
+            this.setState({
+                messages: [...this.state.messages, {text: str, sender: 'me'} ],
+                input: '',
+            });
+            this.state.NewMessage = true;
+        }
+    };
+
+    handleInput = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
+    };
+
+    handleKeyUp = (event) => {
+        if (event.keyCode === 13) {
+            this.handleSendMessage()
+        }
+    };
+
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    };
+
+    render() {
+        const messageElements = this.state.messages.map((message, index) => (
+            <Message key={ index } text={ message.text } sender={ message.sender } />));
+
+        return <div className="layout">
+            <div className="message-field">
+                { messageElements }
+                <div style={ { display: 'flex', marginTop: 'auto', padding: '10px' } }>
+                    <TextField
+                        name="input"
+                        ref={ this.textInput }
+                        fullWidth={ true }
+                        hintText="Введите сообщение"
+                        style={ { fontSize: '22px' } }
+                        onChange={ this.handleInput }
+                        value={ this.state.input }
+                        onKeyUp={ this.handleKeyUp }
+                    />
+                    <FloatingActionButton onClick={ this.handleSendMessage }>
+                        <SendIcon />
+                    </FloatingActionButton>
+                </div>
+                <div style={{ float:"left", clear: "both" }}
+                     ref={(el) => { this.messagesEnd = el; }}>
+                </div>
+            </div>
         </div>
     }
+
 }
-//*
