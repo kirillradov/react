@@ -88,4 +88,5 @@ export default class MessageField extends React.Component {
             </div>
         </div>
     }
+
 }
